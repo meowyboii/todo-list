@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todo List</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <form action="" method="post" id="task">
+      <input
+        type="text"
+        name="title"
+        id="title"
+        placeholder="Task name"
+        required
+      />
+      <input
+        type="text"
+        name="description"
+        id="description"
+        placeholder="Description"
+      />
+      <div id="task_details">
+        <label for="due_date">Due Date: </label>
+        <input type="date" name="due_date" id="due_date" />
+        <label for="priority">Priority: </label>
+        <select name="priority" id="priority">
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+        </select>
+      </div>
+      <div></div>
+      <button type="button" onclick="cancelTask()">Cancel</button>
+      <button type="submit">Add task</button>
+    </form>
+  </body>
+</html>
