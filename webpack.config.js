@@ -27,4 +27,14 @@ module.exports = {
       inject: "body",
     }),
   ],
+  devServer: {
+    static: {
+      directory: path.resolve(__dirname, "dist"),
+    },
+    compress: true,
+    port: 9000,
+    open: true,
+    watchFiles: ["src/**/*.html"],
+    hot: true, // Enable hot module replacement
+  },
 };
