@@ -12,10 +12,10 @@
     />
   </head>
   <body>
-    <button id="add-task">Add a Task</button>
-    <button id="add-project">Add a Project</button>
+    <button id="add-task-btn">Add Task</button>
+    <button id="add-project-btn">Add a Project</button>
     <div class="modal" id="task-modal">
-      <form action="" method="post" id="task" class="modal-content">
+      <form action="" method="dialog" id="task-form" class="modal-content">
         <h3>Add a Task</h3>
         <input
           type="text"
@@ -45,9 +45,26 @@
             <label for="project">Project: </label>
             <select name="project" id="project-select"></select>
           </div>
-          <div class="buttons">
+          <div id="task-buttons">
             <button type="button" id="close-task">Cancel</button>
             <button type="submit">Add task</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal" id="project-modal">
+      <form action="" method="dialog" id="project-form" class="modal-content">
+        <h3>Add Project</h3>
+        <input
+          type="text"
+          name="project-name"
+          id="project-name"
+          placeholder="Project name"
+          required
+        />
+          <div id="project-buttons">
+            <button type="button" id="close-project">Cancel</button>
+            <button type="submit" id="add-project">Add Project</button>
           </div>
         </div>
       </form>

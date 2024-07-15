@@ -53,7 +53,7 @@ const displayController = (function () {
     projectDiv.textContent = project.name;
     document.body.appendChild(projectDiv);
   };
-  const renderProjects = () => {
+  const renderProjectList = () => {
     const selectElement = document.getElementById("project-select");
     selectElement.innerHTML = "";
     const projects = createProjectList.getProjectList();
@@ -65,12 +65,12 @@ const displayController = (function () {
       selectElement.appendChild(option);
     });
   };
-  return { displayProject, showModal, closeModal, renderProjects };
+  return { displayProject, showModal, closeModal, renderProjectList };
 })();
 
-//Add a task event listeners
+//Event listeners for add a task
 (function () {
-  const showButton = document.getElementById("add-task");
+  const showButton = document.getElementById("add-task-btn");
   showButton.addEventListener("click", () => {
     displayController.showModal("task-modal");
   });
@@ -80,10 +80,37 @@ const displayController = (function () {
   });
 })();
 
+//Event listeners for add a project
+(function () {
+  const showButton = document.getElementById("add-project-btn");
+  showButton.addEventListener("click", () => {
+    displayController.showModal("project-modal");
+  });
+  const closeButton = document.getElementById("close-project");
+  closeButton.addEventListener("click", () => {
+    displayController.closeModal("project-modal");
+  });
+
+  const form = document.getElementById("project-form");
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    console.log("shit");
+    // Get the input values
+    const name = document.getElementById("project-name").value;
+    const project = createProject(name);
+    createProjectList.addProjectList(project);
+    console.log(createProjectList.getProjectList());
+    form.reset();
+    displayController.renderProjectList();
+    displayController.closeModal("project-modal");
+  });
+})();
+
 document.addEventListener("DOMContentLoaded", () => {
-  const project = createProject("New Project2");
+  const project = createProject("Default Project");
   createProjectList.addProjectList(project);
 
   displayController.displayProject(project);
-  displayController.renderProjects();
+  displayController.renderProjectList();
 });
