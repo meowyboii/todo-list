@@ -12,8 +12,17 @@
     />
   </head>
   <body>
-    <button id="add-task-btn">Add Task</button>
-    <button id="add-project-btn">Add a Project</button>
+    <div id="container">
+      <div id="sidebar">
+        <div id="logo">TODO-DO</div>
+        <button id="add-task-btn">Add Task</button>
+        <button id="add-project-btn">Add a Project</button>
+      </div>
+      <div id="main">
+        <h2 id="project-title">Project Title</h2>
+        <div id="todo-list"></div>
+      </div>
+    </div>
     <div class="modal" id="task-modal">
       <form action="" method="dialog" id="task-form" class="modal-content">
         <h3>Add a Task</h3>
@@ -47,7 +56,7 @@
           </div>
           <div id="task-buttons">
             <button type="button" id="close-task">Cancel</button>
-            <button type="submit">Add task</button>
+            <button type="submit" id="add-task">Add task</button>
           </div>
         </div>
       </form>
@@ -62,12 +71,15 @@
           placeholder="Project name"
           required
         />
-          <div id="project-buttons">
-            <button type="button" id="close-project">Cancel</button>
-            <button type="submit" id="add-project">Add Project</button>
-          </div>
+        <div id="project-buttons">
+          <button type="button" id="close-project">Cancel</button>
+          <button type="submit" id="add-project">Add Project</button>
         </div>
       </form>
     </div>
+    <script
+      src="https://kit.fontawesome.com/b5eea236ef.js"
+      crossorigin="anonymous"
+    ></script>
   </body>
 </html>

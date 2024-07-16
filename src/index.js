@@ -6,16 +6,17 @@ const createTodo = function (title, description, dueDate, priority) {
   const updateTodoStatus = (status) => {
     todo.status = status;
   };
-  return { todo, updateTodoStatus };
+  const getTodo = () => todo;
+  return { getTodo, updateTodoStatus };
 };
 
 const createTodoList = function () {
   const todoList = [];
-  const createTodoList = (todo) => {
+  const addTodoList = (todo) => {
     todoList.push(todo);
   };
   const getTodoList = () => todoList;
-  return { createTodoList, getTodoList };
+  return { addTodoList, getTodoList };
 };
 
 const createProject = function (name) {
@@ -32,6 +33,7 @@ const createProjectList = (function () {
 
   return { addProjectList, getProjectList };
 })();
+
 const displayController = (function () {
   const showModal = (modalId) => {
     let modal = document.getElementById(modalId);
@@ -48,10 +50,26 @@ const displayController = (function () {
     modal.style.display = "none";
   };
   const displayProject = (project) => {
-    console.log(project);
-    const projectDiv = document.createElement("div");
-    projectDiv.textContent = project.name;
-    document.body.appendChild(projectDiv);
+    const projectTitle = document.getElementById("project-title");
+    projectTitle.textContent = project.name;
+    const todoList = document.getElementById("todo-list");
+    todoList.innerHTML = "";
+    const todos = project.todoList.getTodoList();
+    todos.forEach((todo) => {
+      const label = document.createElement("label");
+      label.textContent = todo.title;
+      label.classList.add("list-container");
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      const title = document.createElement("span");
+      title.classList.add("checkmark");
+      label.appendChild(checkbox);
+      label.appendChild(title);
+
+      todoList.appendChild(label);
+      const lineBreak = document.createElement("hr");
+      todoList.appendChild(lineBreak);
+    });
   };
   const renderProjectList = () => {
     const selectElement = document.getElementById("project-select");
@@ -78,6 +96,31 @@ const displayController = (function () {
   closeButton.addEventListener("click", () => {
     displayController.closeModal("task-modal");
   });
+
+  const form = document.getElementById("task-form");
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    // Get the input values
+    const title = document.getElementById("title").value;
+    const description = document.getElementById("description").value;
+    const dueDate = document.getElementById("due-date").value;
+    const priority = document.getElementById("priority").value;
+
+    const todo = createTodo(title, description, dueDate, priority);
+    const projectSelect = document.getElementById("project-select");
+    const projectIndex = projectSelect.selectedIndex;
+
+    const projects = createProjectList.getProjectList();
+    const selectedProject = projects[projectIndex];
+    selectedProject.todoList.addTodoList(todo.getTodo());
+
+    form.reset();
+    displayController.renderProjectList();
+    displayController.displayProject(selectedProject);
+    displayController.closeModal("task-modal");
+  });
 })();
 
 //Event listeners for add a project
@@ -95,7 +138,7 @@ const displayController = (function () {
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
-    console.log("shit");
+
     // Get the input values
     const name = document.getElementById("project-name").value;
     const project = createProject(name);
