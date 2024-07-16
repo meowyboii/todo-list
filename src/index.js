@@ -72,15 +72,24 @@ const displayController = (function () {
     });
   };
   const renderProjectList = () => {
+    //Project options
     const selectElement = document.getElementById("project-select");
     selectElement.innerHTML = "";
+    //Project list on sidebar
+    const projectList = document.getElementById("my-projects");
+    projectList.innerHTML = "";
+
     const projects = createProjectList.getProjectList();
     console.log(projects);
     projects.forEach((project) => {
       const option = document.createElement("option");
+      const listItem = document.createElement("li");
+
       option.value = project.name;
       option.textContent = project.name;
+      listItem.textContent = project.name;
       selectElement.appendChild(option);
+      projectList.appendChild(listItem);
     });
   };
   return { displayProject, showModal, closeModal, renderProjectList };
