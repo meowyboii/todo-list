@@ -1,22 +1,18 @@
 import "./styles.css";
 
-const createTodo = function (title, description, dueDate, priority) {
-  const todo = { title, description, dueDate, priority, status: false };
-
-  const updateTodoStatus = (status) => {
-    todo.status = status;
-  };
-  const getTodo = () => todo;
-  return { getTodo, updateTodoStatus };
-};
-
 const createTodoList = function () {
   const todoList = [];
-  const addTodoList = (todo) => {
+
+  const createTodo = (title, description, dueDate, priority) => {
+    const todo = { title, description, dueDate, priority, status: false };
     todoList.push(todo);
   };
+  const updateTodoStatus = (index, status) => {
+    todoList[index].status = status;
+  };
+
   const getTodoList = () => todoList;
-  return { addTodoList, getTodoList };
+  return { createTodo, getTodoList, updateTodoStatus };
 };
 
 const createProject = function (name) {
@@ -34,6 +30,15 @@ const createProjectList = (function () {
   return { addProjectList, getProjectList };
 })();
 
+//Set active class for sidebar navigation for current project displayed
+const activateLink = (index) => {
+  const sidebarProjects = document.querySelectorAll("li");
+  sidebarProjects.forEach((project) => {
+    project.classList.remove("active");
+  });
+  sidebarProjects[index].classList.add("active");
+};
+
 const displayController = (function () {
   const showModal = (modalId) => {
     let modal = document.getElementById(modalId);
@@ -49,12 +54,13 @@ const displayController = (function () {
     let modal = document.getElementById(modalId);
     modal.style.display = "none";
   };
-  const displayProject = (project) => {
+  const displayProject = (project, index) => {
     const projectTitle = document.getElementById("project-title");
     projectTitle.textContent = project.name;
     const todoList = document.getElementById("todo-list");
     todoList.innerHTML = "";
     const todos = project.todoList.getTodoList();
+
     todos.forEach((todo) => {
       const label = document.createElement("label");
       label.textContent = todo.title;
@@ -70,6 +76,7 @@ const displayController = (function () {
       const lineBreak = document.createElement("hr");
       todoList.appendChild(lineBreak);
     });
+    activateLink(index);
   };
   const renderProjectList = () => {
     //Project options
@@ -80,7 +87,6 @@ const displayController = (function () {
     projectList.innerHTML = "";
 
     const projects = createProjectList.getProjectList();
-    console.log(projects);
     projects.forEach((project) => {
       const option = document.createElement("option");
       const listItem = document.createElement("li");
@@ -91,12 +97,12 @@ const displayController = (function () {
       selectElement.appendChild(option);
       projectList.appendChild(listItem);
     });
+    initializeProjectList();
   };
   return { displayProject, showModal, closeModal, renderProjectList };
 })();
 
-//Event listeners for add a task
-(function () {
+const initializeAddTask = () => {
   const showButton = document.getElementById("add-task-btn");
   showButton.addEventListener("click", () => {
     displayController.showModal("task-modal");
@@ -117,23 +123,23 @@ const displayController = (function () {
     const dueDate = document.getElementById("due-date").value;
     const priority = document.getElementById("priority").value;
 
-    const todo = createTodo(title, description, dueDate, priority);
     const projectSelect = document.getElementById("project-select");
     const projectIndex = projectSelect.selectedIndex;
 
     const projects = createProjectList.getProjectList();
     const selectedProject = projects[projectIndex];
-    selectedProject.todoList.addTodoList(todo.getTodo());
+    selectedProject.todoList.createTodo(title, description, dueDate, priority);
 
     form.reset();
     displayController.renderProjectList();
-    displayController.displayProject(selectedProject);
+    displayController.displayProject(selectedProject, projectIndex);
+    initializeTodoList(selectedProject);
     displayController.closeModal("task-modal");
   });
-})();
+};
 
 //Event listeners for add a project
-(function () {
+const initializeAddProject = () => {
   const showButton = document.getElementById("add-project-btn");
   showButton.addEventListener("click", () => {
     displayController.showModal("project-modal");
@@ -152,17 +158,47 @@ const displayController = (function () {
     const name = document.getElementById("project-name").value;
     const project = createProject(name);
     createProjectList.addProjectList(project);
-    console.log(createProjectList.getProjectList());
     form.reset();
     displayController.renderProjectList();
+
+    const projectIndex = createProjectList.getProjectList().length - 1;
+    displayController.displayProject(project, projectIndex);
+
     displayController.closeModal("project-modal");
   });
-})();
+};
+
+//Add event listeners for project list on sidebar
+const initializeProjectList = () => {
+  const projects = createProjectList.getProjectList();
+  const sidebarProjects = document.querySelectorAll("li");
+  sidebarProjects.forEach((project, index) => {
+    project.addEventListener("click", () => {
+      displayController.displayProject(projects[index], index);
+      initializeTodoList(projects[index]);
+    });
+  });
+};
+
+//Add event listeners for todo list
+const initializeTodoList = (project) => {
+  const todos = project.todoList;
+  const todoList = document.querySelectorAll('input[type="checkbox"]');
+  todoList.forEach((todo, index) => {
+    todo.addEventListener("change", (event) => {
+      const isChecked = event.target.checked;
+      todos.updateTodoStatus(index, isChecked);
+      console.log(todos.getTodoList());
+    });
+  });
+};
 
 document.addEventListener("DOMContentLoaded", () => {
+  initializeAddProject();
+  initializeAddTask();
   const project = createProject("Default Project");
   createProjectList.addProjectList(project);
-
-  displayController.displayProject(project);
   displayController.renderProjectList();
+  displayController.displayProject(project, 0);
+  initializeTodoList(project);
 });

@@ -1,6 +1,7 @@
 * {
   font-family: "Montserrat", sans-serif;
   margin: 0;
+  font-weight: 500;
 }
 #container {
   min-height: 100vh;
@@ -9,9 +10,9 @@
 }
 #sidebar {
   min-height: 100%;
-  width: 300px;
-  background-color: antiquewhite;
-  padding: 15px;
+  width: 350px;
+  background-color: rgb(250, 241, 255);
+  padding: 10px;
 }
 #logo {
   display: flex;
@@ -19,12 +20,61 @@
   align-items: center;
   height: 10%;
 }
+#action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 5px;
+}
+#action-buttons button {
+  border: rgb(192, 138, 223) solid 1px;
+  text-transform: uppercase;
+  padding: 10px;
+  cursor: pointer;
+  background-color: rgb(192, 138, 223);
+  color: white;
+  transition-duration: 0.2s;
+}
+#action-buttons button:hover {
+  box-shadow: 0 2px 4px 2px rgba(36, 36, 36, 0.11);
+  transform: translateY(-3%);
+}
+#sidebar h4 {
+  font-weight: 600;
+  margin-top: 20px;
+  padding: 5px;
+}
+#my-projects {
+  margin: 5px;
+  margin-top: 10px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+#my-projects li {
+  list-style: none;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+#my-projects li:hover {
+  background-color: rgb(242, 229, 250);
+}
+.active {
+  background-color: rgb(237, 214, 250);
+}
+.active:hover {
+  background-color: rgb(237, 214, 250) !important;
+}
 #main {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 80px 50px;
   width: 100%;
+}
+#project-title {
+  font-weight: 700;
 }
 #project {
   width: 850px;
