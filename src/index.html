@@ -19,7 +19,6 @@
           <button id="add-task-btn">Add Task</button>
           <button id="add-project-btn">Add a Project</button>
         </div>
-
         <h4>My Projects</h4>
         <ul id="my-projects"></ul>
       </div>
@@ -31,7 +30,7 @@
       </div>
     </div>
     <div class="modal" id="task-modal">
-      <form action="" method="dialog" id="task-form" class="modal-content">
+      <form action="" method="dialog" id="add-task-form" class="modal-content task-form">
         <h3>Add a Task</h3>
         <input
           type="text"
@@ -69,7 +68,7 @@
       </form>
     </div>
     <div class="modal" id="project-modal">
-      <form action="" method="dialog" id="project-form" class="modal-content">
+      <form action="" method="dialog" class="modal-content" id="project-form" >
         <h3>Add Project</h3>
         <input
           type="text"
@@ -81,6 +80,44 @@
         <div id="project-buttons">
           <button type="button" id="close-project">Cancel</button>
           <button type="submit" id="add-project">Add Project</button>
+        </div>
+      </form>
+    </div>
+    <div class="modal" id="edit-task-modal">
+      <form action="" method="dialog" id="edit-task-form" class="modal-content task-form">
+        <h3>Edit a Task</h3>
+        <input
+          type="text"
+          name="edit-title"
+          id="edit-title"
+          placeholder="Task name"
+          required
+        />
+        <input
+          type="text"
+          name="edit-description"
+          id="edit-description"
+          placeholder="Description"
+        />
+        <div class="task-details">
+          <label for="edit-due-date">Due Date: </label>
+          <input type="date" name="due-date" id="edit-due-date" />
+          <label for="priority">Priority: </label>
+          <select name="priority" id="edit-priority">
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+          </select>
+        </div>
+        <div class="last-col">
+          <div class="project-selection">
+            <label for="project">Project: </label>
+            <span id="edit-project-select"></select>
+          </div>
+          <div id="task-buttons">
+            <button type="button" id="close-edit-task">Cancel</button>
+            <button type="submit" id="edit-task">Update Task</button>
+          </div>
         </div>
       </form>
     </div>

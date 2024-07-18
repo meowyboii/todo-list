@@ -78,6 +78,10 @@ const displayController = (function () {
       label.appendChild(checkbox);
       label.appendChild(title);
 
+      if (todo.status === true) {
+        title.classList.add("active-check");
+      }
+
       todoList.appendChild(label);
       const lineBreak = document.createElement("hr");
       todoList.appendChild(lineBreak);
@@ -121,7 +125,7 @@ const initializeAddTask = () => {
     displayController.closeModal("task-modal");
   });
 
-  const form = document.getElementById("task-form");
+  const form = document.getElementById("add-task-form");
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -142,8 +146,53 @@ const initializeAddTask = () => {
     form.reset();
     displayController.renderProjectList();
     displayController.displayProject(selectedProject, projectIndex);
-    initializeTodoList(selectedProject);
+    initializeTodoList(selectedProject, projectIndex);
     displayController.closeModal("task-modal");
+  });
+};
+
+//Event listeners for edit task
+const initializeEditTask = (todo, todoIndex, project, projectIndex) => {
+  const form = document.getElementById("edit-task-form");
+
+  // Remove previous event listener
+  form.replaceWith(form.cloneNode(true));
+  const newForm = document.getElementById("edit-task-form");
+
+  const closeButton = document.getElementById("close-edit-task");
+  closeButton.addEventListener("click", () => {
+    displayController.closeModal("edit-task-modal");
+  });
+
+  //Get DOM elements
+  const editTitle = document.getElementById("edit-title");
+  const editDescription = document.getElementById("edit-description");
+  const editDueDate = document.getElementById("edit-due-date");
+  const editPriority = document.getElementById("edit-priority");
+  const editProjectSelect = document.getElementById("edit-project-select");
+
+  //Initialize the input values
+  editTitle.value = todo.title;
+  editDescription.value = todo.description;
+  editDueDate.value = todo.dueDate;
+  editPriority.value = todo.priority;
+  editProjectSelect.textContent = project.name;
+
+  newForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    // Get the input values
+    const title = editTitle.value;
+    const description = editDescription.value;
+    const dueDate = editDueDate.value;
+    const priority = editPriority.value;
+
+    project.todoList.editTodo(title, description, dueDate, priority, todoIndex);
+
+    newForm.reset();
+    displayController.displayProject(project, projectIndex);
+    initializeTodoList(project, projectIndex);
+    displayController.closeModal("edit-task-modal");
   });
 };
 
@@ -184,25 +233,35 @@ const initializeProjectList = () => {
   sidebarProjects.forEach((project, index) => {
     project.addEventListener("click", () => {
       displayController.displayProject(projects[index], index);
-      initializeTodoList(projects[index]);
+      initializeTodoList(projects[index], index);
     });
   });
 };
 
 //Add event listeners for todo list
-const initializeTodoList = (project) => {
+const initializeTodoList = (project, projectIndex) => {
   const todos = project.todoList;
-  const todoList = document.querySelectorAll('input[type="checkbox"]');
+  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
   const checkmarks = document.querySelectorAll("span.checkmark");
+
   checkmarks.forEach((checkmark, index) => {
     checkmark.addEventListener("click", (event) => {
       event.preventDefault();
 
-      todoList[index].checked = !todoList[index].checked;
-      const isChecked = todoList[index].checked;
+      checkboxes[index].checked = !checkboxes[index].checked;
+      const isChecked = checkboxes[index].checked;
       todos.updateTodoStatus(index, isChecked);
       checkmark.classList.toggle("active-check");
       console.log(todos.getTodoList());
+    });
+  });
+  checkboxes.forEach((list, index) => {
+    list.addEventListener("click", (event) => {
+      event.preventDefault();
+      const todoList = todos.getTodoList();
+      displayController.showModal("edit-task-modal");
+      initializeEditTask(todoList[index], index, project, projectIndex);
+      console.log("TODOLIST", todoList);
     });
   });
 };
