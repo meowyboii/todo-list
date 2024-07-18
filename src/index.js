@@ -10,9 +10,15 @@ const createTodoList = function () {
   const updateTodoStatus = (index, status) => {
     todoList[index].status = status;
   };
+  const editTodo = (title, description, dueDate, priority, index) => {
+    todoList[index].title = title;
+    todoList[index].description = description;
+    todoList[index].dueDate = dueDate;
+    todoList[index].priority = priority;
+  };
 
   const getTodoList = () => todoList;
-  return { createTodo, getTodoList, updateTodoStatus };
+  return { createTodo, getTodoList, updateTodoStatus, editTodo };
 };
 
 const createProject = function (name) {
@@ -76,8 +82,11 @@ const displayController = (function () {
       const lineBreak = document.createElement("hr");
       todoList.appendChild(lineBreak);
     });
+    //Highlight the project on the sidebar for the current project being displayed
     activateLink(index);
   };
+
+  //Display the list of projects in the add task project list and sidebar
   const renderProjectList = () => {
     //Project options
     const selectElement = document.getElementById("project-select");
@@ -184,10 +193,15 @@ const initializeProjectList = () => {
 const initializeTodoList = (project) => {
   const todos = project.todoList;
   const todoList = document.querySelectorAll('input[type="checkbox"]');
-  todoList.forEach((todo, index) => {
-    todo.addEventListener("change", (event) => {
-      const isChecked = event.target.checked;
+  const checkmarks = document.querySelectorAll("span.checkmark");
+  checkmarks.forEach((checkmark, index) => {
+    checkmark.addEventListener("click", (event) => {
+      event.preventDefault();
+
+      todoList[index].checked = !todoList[index].checked;
+      const isChecked = todoList[index].checked;
       todos.updateTodoStatus(index, isChecked);
+      checkmark.classList.toggle("active-check");
       console.log(todos.getTodoList());
     });
   });
@@ -196,8 +210,10 @@ const initializeTodoList = (project) => {
 document.addEventListener("DOMContentLoaded", () => {
   initializeAddProject();
   initializeAddTask();
+
   const project = createProject("Default Project");
   createProjectList.addProjectList(project);
+
   displayController.renderProjectList();
   displayController.displayProject(project, 0);
   initializeTodoList(project);

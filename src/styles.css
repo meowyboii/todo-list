@@ -72,6 +72,7 @@
   align-items: center;
   padding: 80px 50px;
   width: 100%;
+  background-color: rgb(252, 249, 255);
 }
 #project-title {
   font-weight: 700;
@@ -167,33 +168,34 @@
   height: 25px;
   width: 25px;
   border-radius: 20px;
-  background-color: #eee;
+  border: rgb(192, 138, 223) solid 2px;
+  background-color: rgb(237, 214, 250);
 }
 
 /* On mouse-over, add a grey background color */
-.list-container:hover input ~ .checkmark {
-  background-color: #ccc;
+.checkmark:hover {
+  background-color: rgb(192, 138, 223);
 }
 
-/* When the checkbox is checked, add a blue background */
-.list-container input:checked ~ .checkmark {
-  background-color: #ffcd60;
+/* When the checkmark is active, add a yellow background */
+.checkmark.active-check {
+  background-color: rgb(192, 138, 223);
 }
 
-/* Create the checkmark/indicator (hidden when not checked) */
+/* Create the checkmark/indicator (hidden when not active) */
 .checkmark:after {
   content: "";
   position: absolute;
   display: none;
 }
 
-/* Show the checkmark when checked */
-.list-container input:checked ~ .checkmark:after {
+/* Show the checkmark when active */
+.checkmark.active-check:after {
   display: block;
 }
 
 /* Style the checkmark/indicator */
-.list-container .checkmark:after {
+.checkmark:after {
   left: 9px;
   top: 5px;
   width: 5px;
