@@ -1,24 +1,33 @@
 import "./styles.css";
 
 const createTodoList = function () {
-  const todoList = [];
+  let todoList = [];
 
   const createTodo = (title, description, dueDate, priority) => {
     const todo = { title, description, dueDate, priority, status: false };
     todoList.push(todo);
+
+    //Store new project list in local storage after creating a todo
+    saveProjectListToLocalStorage();
   };
-  const updateTodoStatus = (index, status) => {
-    todoList[index].status = status;
+  const updateTodoStatus = (index) => {
+    todoList[index].status = !todoList[index].status;
+    //Store new project list in local storage after updating a todo status
+    saveProjectListToLocalStorage();
   };
   const editTodo = (title, description, dueDate, priority, index) => {
     todoList[index].title = title;
     todoList[index].description = description;
     todoList[index].dueDate = dueDate;
     todoList[index].priority = priority;
+
+    //Store new project list in local storage after editing a todo
+    saveProjectListToLocalStorage();
   };
 
   const getTodoList = () => todoList;
-  return { createTodo, getTodoList, updateTodoStatus, editTodo };
+  const setTodoList = (list) => (todoList = list);
+  return { createTodo, getTodoList, updateTodoStatus, editTodo, setTodoList };
 };
 
 const createProject = function (name) {
@@ -27,13 +36,15 @@ const createProject = function (name) {
 };
 
 const createProjectList = (function () {
-  const projectList = [];
+  let projectList = [];
   const addProjectList = (project) => {
     projectList.push(project);
+    saveProjectListToLocalStorage();
   };
   const getProjectList = () => projectList;
+  const setProjectList = (projects) => (projectList = projects);
 
-  return { addProjectList, getProjectList };
+  return { addProjectList, getProjectList, setProjectList };
 })();
 
 //Set active class for sidebar navigation for current project displayed
@@ -66,7 +77,6 @@ const displayController = (function () {
     const todoList = document.getElementById("todo-list");
     todoList.innerHTML = "";
     const todos = project.todoList.getTodoList();
-
     todos.forEach((todo) => {
       const label = document.createElement("label");
       label.textContent = todo.title;
@@ -247,12 +257,8 @@ const initializeTodoList = (project, projectIndex) => {
   checkmarks.forEach((checkmark, index) => {
     checkmark.addEventListener("click", (event) => {
       event.preventDefault();
-
-      checkboxes[index].checked = !checkboxes[index].checked;
-      const isChecked = checkboxes[index].checked;
-      todos.updateTodoStatus(index, isChecked);
+      todos.updateTodoStatus(index);
       checkmark.classList.toggle("active-check");
-      console.log(todos.getTodoList());
     });
   });
   checkboxes.forEach((list, index) => {
@@ -261,19 +267,49 @@ const initializeTodoList = (project, projectIndex) => {
       const todoList = todos.getTodoList();
       displayController.showModal("edit-task-modal");
       initializeEditTask(todoList[index], index, project, projectIndex);
-      console.log("TODOLIST", todoList);
     });
   });
+};
+
+const saveProjectListToLocalStorage = () => {
+  const projectList = createProjectList.getProjectList();
+  const todoList = [];
+  const projectNames = [];
+  projectList.forEach((project) => {
+    projectNames.push(project.name);
+    todoList.push(project.todoList.getTodoList());
+  });
+
+  localStorage.setItem("projectNames", JSON.stringify(projectNames));
+  localStorage.setItem("todoList", JSON.stringify(todoList));
+};
+
+const loadProjectListFromLocalStorage = () => {
+  const projectNames = JSON.parse(localStorage.getItem("projectNames"));
+  const todoList = JSON.parse(localStorage.getItem("todoList"));
+  if (projectNames) {
+    projectNames.forEach((projectName, index) => {
+      const project = createProject(projectName);
+      project.todoList.setTodoList(todoList[index]);
+      createProjectList.addProjectList(project);
+    });
+  }
 };
 
 document.addEventListener("DOMContentLoaded", () => {
   initializeAddProject();
   initializeAddTask();
+  loadProjectListFromLocalStorage();
+  const projectList = createProjectList.getProjectList();
 
-  const project = createProject("Default Project");
-  createProjectList.addProjectList(project);
-
+  let defaultProject;
+  if (projectList.length === 0) {
+    defaultProject = createProject("Default Project");
+    createProjectList.addProjectList(defaultProject);
+  } else {
+    defaultProject = projectList[0];
+  }
   displayController.renderProjectList();
-  displayController.displayProject(project, 0);
-  initializeTodoList(project);
+  displayController.displayProject(defaultProject, 0);
+  initializeTodoList(defaultProject);
 });
